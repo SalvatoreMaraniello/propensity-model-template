@@ -1,0 +1,426 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>source code &#8212; Propensity Model 0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinxdoc.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Propensity Model 0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">source code</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="source-code">
+<h1>source code<a class="headerlink" href="#source-code" title="Permalink to this heading">¶</a></h1>
+<section id="module-src.main">
+<span id="main"></span><h2>main<a class="headerlink" href="#module-src.main" title="Permalink to this heading">¶</a></h2>
+<p>Run propensity model.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.main.main">
+<span class="sig-prename descclassname"><span class="pre">src.main.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exec_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.main.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run propensity model in either train or predict mode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run_mode</strong> (<em>str</em>) – Must be equal to “train” or “predict”. In the first case, the propensity model
+s retrained and updated in GCP. In the second case, the leads coversion likelihood and potential
+value is forecast. Output is stored in data warehouse.</p></li>
+<li><p><strong>params</strong> (<em>dict</em>) – Model parameters. Refer to <cite>src/params.yaml</cite> for more details.</p></li>
+<li><p><strong>exec_time</strong> (<em>str</em><em>, </em><em>optional</em>) – String in format “%Y-%m-%d” defining the date when the model is
+executed. Note that time is different than run time. For e.g.g, if <cite>exec_time=’2022-06-30’</cite>,
+the model will load data about leads crearted up until “2022-06-30 00:00:00”. Defaults to current date.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.engines">
+<span id="engines"></span><h2>engines<a class="headerlink" href="#module-src.engines" title="Permalink to this heading">¶</a></h2>
+<p>This module contain the main engines of the service. These are used to estimate likelihood of
+conversion and potential booking value.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.engines.PropensityEngine">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.engines.</span></span><span class="sig-name descname"><span class="pre">PropensityEngine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datetime_from</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime_to</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lookback_window_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conversion_window_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">estimator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">estimator_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibration_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.engines.PropensityEngine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.engines.PropensityEngine.build_dataframes">
+<span class="sig-name descname"><span class="pre">build_dataframes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.engines.PropensityEngine.build_dataframes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build input dataframe for propensity model. This step generally includes:</p>
+<ul class="simple">
+<li><p>data type conversion</p></li>
+<li><p>joining sources from different input tables.</p></li>
+<li><p>deduplication</p></li>
+<li><p>engineering new features</p></li>
+</ul>
+<p><em>Important</em>:
+DO NOT add here preprocessing steps that depend on data values. For e.g., imputing
+missing values, scaling, replacing uncommon categories should not be done here!</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.engines.PropensityEngine.build_pipeline">
+<span class="sig-name descname"><span class="pre">build_pipeline</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.engines.PropensityEngine.build_pipeline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a scikit-learn pipeline for processing model features and train model. In this demo
+model we assume all numerical and categorical features are processed in the same way. More
+generally, however, one would perform different steps for different features.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.engines.PropensityEngine.check_estimator">
+<span class="sig-name descname"><span class="pre">check_estimator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.engines.PropensityEngine.check_estimator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quality checks to ensure the retrained model has expected performance. Raise error
+if model does not meet standards.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.engines.PropensityEngine.load_leads_data">
+<span class="sig-name descname"><span class="pre">load_leads_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.engines.PropensityEngine.load_leads_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load data about leads. These are read as pandas DataFrames and attached as attributes to
+self.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.engines.PropensityEngine.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.engines.PropensityEngine.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run pipeline. This method will load input data, preprocess them and either train/generate
+predictions.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.engines.ValueEngine">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.engines.</span></span><span class="sig-name descname"><span class="pre">ValueEngine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datetime_from</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime_to</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lookback_window_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.engines.ValueEngine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.engines.ValueEngine.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'med'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correct_available</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.engines.ValueEngine.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict leads value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<em>str</em><em>, </em><em>optional</em>) – defines the method used to infer booking value. Defaults to</p></li>
+<li><p><strong>available</strong> (<em>'med'. Strategies</em>) – <ul>
+<li><p>‘avg’: assigns booking value as weighted average of all searches.</p></li>
+<li><p>’med’: assigns booking value as median of all searches.</p></li>
+<li><p>We could add here more strategies.</p></li>
+</ul>
+</p></li>
+<li><p><strong>correct_available</strong> (<em>bool</em><em>, </em><em>optional</em>) – If lead has converted, use exact booking value based</p></li>
+<li><p><strong>True.</strong> (<em>on transaction record. Defaults to</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-src.connector">
+<span id="connector"></span><h2>connector<a class="headerlink" href="#module-src.connector" title="Permalink to this heading">¶</a></h2>
+<p>This module contain a class to connect and query from a PostgreSQL database. It uses sqlalchemy
+engine [1] with a Psycopg driver [2,3].</p>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>For compatibility we use psycopg2-binary, which is a pre-compiled version of Psycopg [2].</p></li>
+<li><dl class="simple">
+<dt>Psycopg can be used also without sqlalchemy. However, sqlalchemy allows nice formatting</dt><dd><p>when used with pandas - e.g. retrieve column names automatically.</p>
+</dd>
+</dl>
+</li>
+<li><p>Other drivers are available (and may be faster). Sqlalchemi supports the following [3].</p></li>
+</ul>
+<p class="rubric">References</p>
+<ol class="arabic simple">
+<li><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/engines.html">https://docs.sqlalchemy.org/en/14/core/engines.html</a></p></li>
+<li><p><a class="reference external" href="https://www.psycopg.org/docs/install.html#install-from-source">https://www.psycopg.org/docs/install.html#install-from-source</a></p></li>
+<li><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/dialects/postgresql.html">https://docs.sqlalchemy.org/en/14/dialects/postgresql.html</a></p></li>
+<li><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/dialects/postgresql.html#module-sqlalchemy.dialects.postgresql.psycopg2">https://docs.sqlalchemy.org/en/14/dialects/postgresql.html#module-sqlalchemy.dialects.postgresql.psycopg2</a></p></li>
+</ol>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.connector.PostgreSqlConnector">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.connector.</span></span><span class="sig-name descname"><span class="pre">PostgreSqlConnector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.connector.PostgreSqlConnector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>PostgreSQL connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user</strong> (<em>str</em><em>, </em><em>optional</em>) – POSTGRES database username. If <cite>None</cite>, this is set as per <cite>POSTGRES_USER</cite>
+env variable.</p></li>
+<li><p><strong>password</strong> (<em>str</em><em>, </em><em>optional</em>) – POSTGRES database password. If <cite>None</cite>, this is set as per
+<cite>POSTGRES_PASSWORD</cite> env variable.</p></li>
+<li><p><strong>database</strong> (<em>str</em>) – Database name. If <cite>None</cite>, this is set as per <cite>POSTGRES_DATABASE</cite> env variable.</p></li>
+<li><p><strong>host</strong> (<em>str</em><em>, </em><em>optional</em>) – Database URL/IP address. If <cite>None</cite>, this is set as per <cite>POSTGRES_URI</cite> env
+variable.</p></li>
+<li><p><strong>port</strong> (<em>str</em><em>, </em><em>optional</em>) – Database port. If <cite>None</cite>, this is set as per <cite>POSTGRES_PORT</cite> env variable.</p></li>
+<li><p><strong>References</strong> – <ol class="arabic simple">
+<li><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/engines.html">https://docs.sqlalchemy.org/en/14/core/engines.html</a></p></li>
+<li><p><a class="reference external" href="https://www.psycopg.org/docs/install.html#install-from-source">https://www.psycopg.org/docs/install.html#install-from-source</a></p></li>
+<li><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/dialects/postgresql.html">https://docs.sqlalchemy.org/en/14/dialects/postgresql.html</a></p></li>
+<li><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/dialects/postgresql.html#module-sqlalchemy.dialects.postgresql.psycopg2">https://docs.sqlalchemy.org/en/14/dialects/postgresql.html#module-sqlalchemy.dialects.postgresql.psycopg2</a></p></li>
+</ol>
+</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.connector.PostgreSqlConnector.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sql_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">text</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">CursorResult</span></span></span><a class="headerlink" href="#src.connector.PostgreSqlConnector.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute SQL query and returns a <cite>CursorResult</cite> SQL object. Data can be fetched using the
+<cite>fetch*</cite> methods attached to the cursor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sql_query</strong> – query to run. For queries using parameters, the function employs</p></li>
+<li><p><strong>`</strong> (<em>sqlalchemy.text and parameters should be indicated as</em>) – param-name` [8].</p></li>
+<li><p><strong>params</strong> (<em>dict</em><em>, </em><em>optional</em>) – dictionary specifying the query parameters values.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>results cursor with attached methods to</dt><dd><p>fetch the data.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>param1 (sqlalchemy.engine.cursor.CursorResult)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Here is a sample query with two parameters:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conn</span> <span class="o">=</span> <span class="n">PostgreSqlConnector</span><span class="p">(</span> <span class="n">database</span> <span class="o">=</span> <span class="s1">&#39;xxx&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="s1">&#39;select * from table-name where id&gt;:minId limit :rows&#39;</span><span class="p">,</span>
+<span class="gp">... </span>   <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;minId&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;rows&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span> <span class="p">)</span>
+<span class="gp">... </span><span class="n">data</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.connector.PostgreSqlConnector.get_connection">
+<span class="sig-name descname"><span class="pre">get_connection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Connection</span></span></span><a class="headerlink" href="#src.connector.PostgreSqlConnector.get_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a connection object [7].</p>
+<p class="rubric">Examples</p>
+<p>Connection objects can be used in <cite>with</cite> statements
+&gt;&gt;&gt; conn = PostgreSqlConnector()
+&gt;&gt;&gt; with conn.get_connection() as c_active:
+&gt;&gt;&gt;     res = c_active.execute(‘select * from TABLE limit 3’)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.connector.PostgreSqlConnector.read_sql_query">
+<span class="sig-name descname"><span class="pre">read_sql_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sql_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">text</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="headerlink" href="#src.connector.PostgreSqlConnector.read_sql_query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper of <cite>pandas.read_sql_query</cite> to read SQL statements into DataFrames.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sql_query</strong> – query to run. For queries using parameters, the function employs</p></li>
+<li><p><strong>`</strong> (<em>sqlalchemy.text and parameters should be indicated as</em>) – param-name` [8].</p></li>
+<li><p><strong>kwargs</strong> – any optional argument of <cite>pandas.read_sql_table</cite>. Useful parameters are:
+params (dict): dictionary specifying the query parameters values.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>output table as a pandas DataFrame object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>param1 (pandas.DataFrame)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Here is a sample query with two parameters:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conn</span> <span class="o">=</span> <span class="n">PostgreSqlConnector</span><span class="p">(</span> <span class="n">database</span> <span class="o">=</span> <span class="s1">&#39;xxx&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="s1">&#39;select * from table-name where id&gt;:minId limit :rows&#39;</span><span class="p">,</span>
+<span class="gp">... </span>   <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;minId&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;rows&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span> <span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-src.lib_yaml">
+<span id="lib-yaml"></span><h2>lib_yaml<a class="headerlink" href="#module-src.lib_yaml" title="Permalink to this heading">¶</a></h2>
+<p>Provides support to read/manipulate yaml files</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.lib_yaml.FILEextension">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.lib_yaml.</span></span><span class="sig-name descname"><span class="pre">FILEextension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.lib_yaml.FILEextension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Defines (valid) YAML file extensions</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.lib_yaml.FILEextension.OTHERext">
+<span class="sig-name descname"><span class="pre">OTHERext</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#src.lib_yaml.FILEextension.OTHERext" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.lib_yaml.FILEextension.YAMLext">
+<span class="sig-name descname"><span class="pre">YAMLext</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('yml',</span> <span class="pre">'yaml')</span></em><a class="headerlink" href="#src.lib_yaml.FILEextension.YAMLext" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="src.lib_yaml.YamlIOException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.lib_yaml.</span></span><span class="sig-name descname"><span class="pre">YamlIOException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.lib_yaml.YamlIOException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Class for handling exceptions during input/output operations with YAML files</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.lib_yaml.read_yaml">
+<span class="sig-prename descclassname"><span class="pre">src.lib_yaml.</span></span><span class="sig-name descname"><span class="pre">read_yaml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_to_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#src.lib_yaml.read_yaml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads content of yaml file into dictionary.
+An error is raised if file extension is not recognised.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.lib_yaml.read_yaml_from_dir">
+<span class="sig-prename descclassname"><span class="pre">src.lib_yaml.</span></span><span class="sig-name descname"><span class="pre">read_yaml_from_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_to_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_error_continue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#src.lib_yaml.read_yaml_from_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load all (and only) YAML files in folder, including nested directories up to a specified depth.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_to_dir</strong> (<em>str</em>) – Path to folder/yaml file</p></li>
+<li><p><strong>on_error_continue</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em><em>, </em><em>optional</em>) – If True, it will not raise error if a file with
+yaml extension fails to load. Defaults to False.</p></li>
+<li><p><strong>max_depth</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – List of (yaml) file names which failed loading. Only
+returned if <cite>on_error_continue=True</cite>. Defaults to 3.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>FILEextension error.</strong> – </p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dictionary with (possibly nested) dictionaries.
+failed_yaml (list of str): name of files which could not be loaded.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>collection (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.lib_io">
+<span id="lib-io"></span><h2>lib_io<a class="headerlink" href="#module-src.lib_io" title="Permalink to this heading">¶</a></h2>
+<p>Library with input/output utils.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.lib_io.load_estimator">
+<span class="sig-prename descclassname"><span class="pre">src.lib_io.</span></span><span class="sig-name descname"><span class="pre">load_estimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name_root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.lib_io.load_estimator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load estimator and setting files from GCP bucket.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_name_root</strong> (<em>str</em>) – model identifier.</p></li>
+<li><p><strong>file_name_root</strong> – model name.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>_description_</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>estimator</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.lib_io.save_estimator">
+<span class="sig-prename descclassname"><span class="pre">src.lib_io.</span></span><span class="sig-name descname"><span class="pre">save_estimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">estimator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name_root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.lib_io.save_estimator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dumps estimator to bucket together with parameters required to run in json</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">source code</a><ul>
+<li><a class="reference internal" href="#module-src.main">main</a></li>
+<li><a class="reference internal" href="#module-src.engines">engines</a></li>
+<li><a class="reference internal" href="#module-src.connector">connector</a></li>
+<li><a class="reference internal" href="#module-src.lib_yaml">lib_yaml</a></li>
+<li><a class="reference internal" href="#module-src.lib_io">lib_io</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/src.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Propensity Model 0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">source code</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright S. Maraniello, 2022..
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+    </div>
+  </body>
+</html>
