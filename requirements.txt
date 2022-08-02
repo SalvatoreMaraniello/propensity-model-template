@@ -1,0 +1,10 @@
+pandas>=1.3.2,<2.0
+PyYAML>=6.0
+scikit-learn>=1.1.1,<2.0
+google-cloud-storage
+imbalanced-learn>=0.6.0,<1.0
+SQLAlchemy>=1.4.23,<2.0
+psycopg2-binary>=2.9.2,<3.0
+ipython
+python-dotenv
+sphinx

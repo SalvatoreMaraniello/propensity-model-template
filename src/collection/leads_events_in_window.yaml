@@ -1,0 +1,36 @@
+desc: | 
+  Counts events triggered by all leads created in dates range [:datetime_from;:datetime_to]. Events are
+  counted in a window of lookback_window_days before lead creation.
+params:
+  - datetime_from
+  - datetime_to
+  - lookback_window_days
+query: |
+    with 
+    leads as (
+      select userId, eventTime, eventId as leadCreateEventId
+      from events as e
+      where e.timestamp >= :datetime_from 
+      and e.timestamp < :datetime_to
+      and e.eventType = 'create_lead'
+    )
+    select 
+      userId, leadCreateEventId,
+      count( distinct sessionId) as numSessions,
+      count(*) filter ( where event_name = 'add_to_wishlist') as addToWishlist,
+      count(*) filter ( where event_name = 'view_home_policy') as viewHomePolicy,
+      count(*) filter ( where event_name = 'view_floorplan') as viewFloorplan,
+      count(*) filter ( where event_name = 'contact_host') as contactHost,
+      count(*) filter ( where event_name = 'view_sleep_arrangment') as viewSleepArrangment,
+
+      ... AGGREGATE MORE EVENT TYPES HERE ...
+      ... (USE ANY AGGREGATE FUNCTION) ...
+
+    from events as e 
+    join leads as l 
+    on l.userId = e.userId 
+    where e.eventTime < :datetime_to
+    and e.eventTime >= :datetime_from - :lookback_window_days * (interval '1 day')
+    and e.eventTime > l.eventTime - :lookback_window_days * (interval '1 day')
+    and e.eventTime < l.eventTime
+    group by userId, leadCreateEventId

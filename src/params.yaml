@@ -1,0 +1,19 @@
+# general parameters: same value must be used in train/predict
+general:
+  model-id: propensity-model       # use this to manage multiple version of the model
+  version: 0.0
+  lookback_window_days: 64         # time window (in days) used to estimate user engagement
+  conversion_window_days: 21       # time window (in days) after lead creation in which we check for conversion
+run_mode:
+  predict:
+    dates_process_range_days: 3    # fetch leads generated in a 3 days range
+  train:
+    dates_process_range_days: 90   # fetch leads generated in a 90 days range
+    estimator_params:              # add here parameters for estimator
+      bootstrap: True
+      class_weight: balanced
+      n_estimators: 200
+      sampling_strategy: 0.2
+    calibration_params:            # add here parameters for calibration, if required.
+      method: isotonic
+      cv: 5

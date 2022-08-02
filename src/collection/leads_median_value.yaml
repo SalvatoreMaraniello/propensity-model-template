@@ -1,0 +1,35 @@
+desc: | 
+  Determines booking value of leads created in dates range [:datetime_from;:datetime_to]. This is computed
+  the median booking value as inferred from all searched done in a window of lookback_window_days
+  before lead creation.
+params:
+  - datetime_from
+  - datetime_to
+  - lookback_window_days
+query: |
+    with 
+    leads as (
+      select userId, eventTime, eventId as leadCreateEventId
+      from events as e
+      where e.timestamp >= :datetime_from 
+      and e.timestamp < :datetime_to
+      and e.eventType = 'create_lead'
+    ),
+    searches as (
+      select 
+        userId, leadCreateEventId,
+        (params::json->>'booking_total')::real as bookingValue
+      from events as e 
+      join leads as l 
+      on l.userId = e.userId 
+      where e.eventTime < :datetime_to
+      and e.eventTime >= :datetime_from 
+      and e.eventType = 'search'
+      and e.eventTime > l.eventTime - :lookback_window_days * (interval '1 day')
+      and e.eventTime < l.eventTime
+    )
+    select 
+      userId,
+      (percentile_cont(.50) within group (order by bookingValue))::real as bookingValueMedian
+    from searches 
+    group by userId
